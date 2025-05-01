@@ -1,0 +1,61 @@
+date,meal,items/0/name,items/0/calories,items/1/name,items/1/calories,items/2/name,items/2/calories,total_calories
+2025-04-28,Lunch,Chicken Salad Sandwich,450,Apple,95,Mixed Nuts,180,725
+2025-04-28,Dinner,Spaghetti Bolognese,600,Side Salad,100,Garlic Bread,150,850
+2025-04-29,Breakfast,Scrambled Eggs,140,Whole Wheat Toast,80,Orange Juice,110,330
+2025-04-29,Lunch,Vegetable Soup,160,Crackers,120,String Cheese,80,360
+2025-04-29,Dinner,Grilled Salmon,400,Roasted Asparagus,50,Quinoa,220,670
+2025-04-30,Breakfast,Greek Yogurt,130,Berries,60,Granola,150,340
+2025-04-30,Lunch,Turkey Wrap,380,Baby Carrots,40,Hummus,70,490
+2025-04-30,Dinner,Chicken Stir-fry,550,Brown Rice,215,Fortune Cookie,30,795
+2025-05-01,Breakfast,Pancakes,250,Maple Syrup,100,Butter,102,452
+2025-05-01,Lunch,Lentil Soup,230,Whole Grain Bread,90,Apple,95,415
+2025-05-01,Dinner,Beef Tacos (2),500,Salsa & Guacamole,120,Mexican Rice,150,770
+2025-05-02,Breakfast,"Smoothie (Spinach, Protein Powder, Almond Milk, Pear)",310,Toast,80,Peanut Butter,95,485
+2025-05-02,Lunch,Tuna Salad (on Lettuce Wraps),290,Cucumber Slices,20,Crackers,120,430
+2025-05-02,Dinner,Pork Chop,350,Sweet Potato Mash,200,Green Beans,40,590
+2025-05-03,Breakfast,Cottage Cheese,110,Pineapple Chunks,80,Granola,150,340
+2025-05-03,Lunch,Leftover Pork Chop,350,Mixed Greens Salad with Vinaigrette,130,Dinner Roll,120,600
+2025-05-03,Dinner,Vegetable Curry,400,Naan Bread,260,Mango Chutney,60,720
+2025-05-04,Breakfast,Bagel with Cream Cheese,350,Grapefruit,50,Coffee with Milk,30,430
+2025-05-04,Lunch,Chicken Caesar Salad,550,Breadstick,120,Iced Tea,5,675
+2025-05-04,Dinner,Baked Cod,200,Steamed Broccoli,55,Wild Rice,165,420
+2025-05-05,Breakfast,Idli (2 pieces),160,Sambar (1 cup),120,Coconut Chutney (2 tbsp),80,360
+2025-05-05,Lunch,Rajma Chawal (Kidney bean curry with rice),550,Yogurt (Raita),60,Papadum,35,645
+2025-05-05,Dinner,Roti (2 small),180,Palak Paneer (Spinach and cottage cheese),350,Onion Salad,30,560
+2025-05-06,Breakfast,Cereal with Milk,250,Mango slices,100,Almonds,80,430
+2025-05-06,Lunch,Chicken Biryani,600,Cucumber Salad,30,Mint Chutney,40,670
+2025-05-06,Dinner,Dal Makhani (Creamy lentils),400,Jeera Rice (Cumin rice),250,Mixed Pickle,30,680
+2025-05-07,Breakfast,Poha (Flattened rice dish),300,Chai (Tea with milk),70,Banana,105,475
+2025-05-07,Lunch,Vegetable Pulao,450,Plain Yogurt,80,Green Chutney,40,570
+2025-05-07,Dinner,Fish Curry,380,Steamed Rice,205,Lemon Pickle,30,615
+2025-05-08,Breakfast,Omelette (2 eggs),180,Toast (1 slice),80,Coffee,5,265
+2025-05-08,Lunch,Chole Bhature (Chickpea curry with fried bread),700,Onion Rings,30,Mint Chutney,40,770
+2025-05-08,Dinner,Khichdi (Lentil and rice porridge),400,Pickle (Achar),30,Papadum,35,465
+2025-05-09,Breakfast,Aloo Paratha (Potato stuffed flatbread),350,Yogurt,60,Pickle,30,440
+2025-05-09,Lunch,Mutton Curry,450,Roti (2 small),180,Onion Salad,30,660
+2025-05-09,Dinner,Paneer Tikka Masala,480,Garlic Naan,300,Raita,60,840
+2025-05-10,Breakfast,Upma (Semolina dish),320,Coconut Chutney,80,Tea,30,430
+2025-05-10,Lunch,Egg Curry (2 eggs),300,Rice,205,Papadum,35,540
+2025-05-10,Dinner,Pizza Slice (Pepperoni),350,Side Salad,100,Garlic Bread,150,600
+2025-05-11,Breakfast,French Toast (2 slices),300,Strawberries,50,Maple Syrup,100,450
+2025-05-11,Lunch,Pasta with Marinara Sauce,450,Garlic Bread (1 slice),150,Caesar Salad,100,700
+2025-05-11,Dinner,Butter Chicken,500,Plain Naan,280,Raita,60,840
+2025-05-12,Breakfast,Masala Dosa,380,Sambar,120,Coconut Chutney,80,580
+2025-05-12,Lunch,Dal Fry (Yellow lentil curry),300,Rice,205,Bhindi Sabzi (Okra stir-fry),150,655
+2025-05-12,Dinner,Vegetable Hakka Noodles,450,Gobi Manchurian (Cauliflower appetizer),300,Hot and Sour Soup,100,850
+2025-05-13,Breakfast,Bread Pakora (2 pieces),350,Mint Chutney,40,Masala Chai,70,460
+2025-05-13,Lunch,Kadhi Pakora (Yogurt curry with fritters),380,Rice,205,Papadum,35,620
+2025-05-13,Dinner,Baingan Bharta (Roasted eggplant mash),250,Roti (2 small),180,Onion Salad,30,460
+2025-05-14,Breakfast,"Smoothie (Banana, Yogurt, Honey)",280,Toast,80,Peanut Butter,95,455
+2025-05-14,Lunch,Pav Bhaji (Vegetable mash with bread rolls),600,Onion Rings,30,Butter,102,732
+2025-05-14,Dinner,Chicken Korma,450,Paratha (Layered flatbread),250,Raita,60,760
+2025-05-15,Breakfast,"Besan Cheela (Gram flour pancake, 2)",280,Tomato Chutney,50,Masala Chai,70,400
+2025-05-15,Lunch,Aloo Gobi (Potato and cauliflower stir-fry),300,Dal Tadka,250,Roti (2 small),180,730
+2025-05-15,Dinner,Soya Chaap Curry,400,Rumali Roti (Thin flatbread),150,Mint Chutney,40,590
+2025-05-16,Breakfast,"Egg Bhurji (Scrambled eggs, Indian style)",220,Bread slices (2),160,Masala Chai,70,450
+2025-05-16,Lunch,Matar Paneer (Peas and cottage cheese curry),380,Jeera Rice,250,Papadum,35,665
+2025-05-16,Dinner,"Momos (Steamed dumplings, 6 pieces)",350,Spicy Dip,60,Clear Soup,45,455
+2025-05-17,Breakfast,Vermicelli Upma (Seviyan Upma),340,Coconut Chutney,80,Tea,30,450
+2025-05-17,Lunch,Mixed Vegetable Curry,280,Chapati (2),160,Boondi Raita,110,550
+2025-05-17,Dinner,Chilli Chicken (Dry),480,Fried Rice (Veg),350,Manchow Soup,120,950
+2025-05-18,Breakfast,"Moong Dal Cheela (Lentil pancake, 2)",260,Green Chutney,40,Masala Chai,70,370
