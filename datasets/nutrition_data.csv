@@ -1,4 +1,4 @@
-date,meal,items/0/name,items/0/calories,items/1/name,items/1/calories,items/2/name,items/2/calories,total_calories
+Date,meal,items/0/name,items/0/calories,items/1/name,items/1/calories,items/2/name,items/2/calories,total_calories
 2025-04-28,Lunch,Chicken Salad Sandwich,450,Apple,95,Mixed Nuts,180,725
 2025-04-28,Dinner,Spaghetti Bolognese,600,Side Salad,100,Garlic Bread,150,850
 2025-04-29,Breakfast,Scrambled Eggs,140,Whole Wheat Toast,80,Orange Juice,110,330

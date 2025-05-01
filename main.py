@@ -1,19 +1,12 @@
 # Import necessary libraries
 import os  # For environment variables and file operations
 import pandas as pd  # For data manipulation
-from langchain_huggingface import HuggingFaceEmbeddings  # For text embeddings using HuggingFace models
-from langchain_community.vectorstores import FAISS  # For vector storage and similarity search
-from langchain_community.document_loaders import CSVLoader  # For loading CSV files
-from langchain.text_splitter import RecursiveCharacterTextSplitter  # For splitting text into chunks
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings  # For OpenAI's language models and embeddings
-from langchain_pinecone import PineconeVectorStore  # For Pinecone vector database
+
 from langchain.retrievers import EnsembleRetriever  # For combining multiple retrievers
 from dotenv import load_dotenv  # For loading environment variables
 from langchain.prompts import PromptTemplate  # For creating prompt templates
 from langchain.memory import ConversationBufferMemory  # For maintaining conversation history
 import re  # For regular expressions
-import pinecone  # For Pinecone vector database operations
-from langchain_community.tools.brave_search.tool import BraveSearch  # For web search functionality
 import streamlit as st  # For creating web interface
 
 # Load environment variables from .env file
@@ -23,149 +16,6 @@ pinecone_api_key = os.getenv("PINECONE_API_KEY")  # Get Pinecone API key
 brave_api_key = os.getenv("BRAVE_API_KEY")  # Get Brave Search API key
 openai_api_key = os.getenv("OPENAI_API_KEY")  # Get OpenAI API key
 llm_model = "gpt-4o"  # Specify the language model to use
-
-# Initialize embeddings with caching to avoid PyTorch conflicts
-@st.cache_resource
-def get_embeddings(model: str):
-    """
-    Get text embeddings based on specified model
-    Args:
-        model (str): Either 'openai' or 'generic' for HuggingFace
-    Returns:
-        Embeddings object for the specified model
-    """
-    if model == "openai":
-        return OpenAIEmbeddings(model = "text-embedding-3-small", api_key = openai_api_key) #type: ignore
-    else:
-        return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-# Cache vector store initialization to run only once
-@st.cache_resource
-def initialize_vector_stores(model:str, faiss_docs_dir:str):
-    """
-    Initialize and return vector stores (FAISS and Pinecone).
-    If Pinecone index already exists, skip document ingestion.
-    
-    Args:
-        model (str): Embedding model to use ('openai' or 'generic')
-        faiss_docs_dir (str): Directory for FAISS index storage
-        
-    Returns:
-        tuple: (faiss_store, pinecone_store) - The initialized vector stores
-    """
-    # Get embeddings based on model choice
-    embeddings = get_embeddings(model)
-    if model == "openai":
-        embedding_size = 1536  # OpenAI embedding dimension
-    else:
-        embedding_size = 384  # HuggingFace embedding dimension
-    
-    # Define data sources and categories
-    file_paths = ["df_skin.csv", "df_hair.csv", "df_vits_supp.csv"]
-    namespaces = {"df_skin.csv": "skin", "df_hair.csv": "hair", "df_vits_supp.csv": "vitamins_supplements"}
-    faiss_docs = []
-    pinecone_docs = {"skin": [], "hair": [], "vitamins_supplements": []}
-
-    # Initialize Pinecone client
-    pc = pinecone.Pinecone(api_key=pinecone_api_key)
-
-    # Set index name based on model
-    if model == "openai":
-        index_name = "clinikally-rag-2"
-    else:
-        index_name = "clinikally-rag"
-    index_exists = False
-
-    # Check if Pinecone index exists
-    try:
-        indexes = pc.list_indexes()
-        index_exists = any(index.name == index_name for index in indexes)
-        
-        if index_exists:
-            print(f"Index '{index_name}' already exists. Skipping document ingestion.")
-        else:
-            print(f"Index '{index_name}' does not exist. Will create and ingest documents.")
-            pc.create_index(index_name, dimension= embedding_size, spec = pinecone.ServerlessSpec(cloud="aws", region="us-east-1"))
-    except Exception as e:
-        print(f"Error checking Pinecone index: {e}")
-        print("Will proceed with document processing for FAISS.")
-
-    # Process documents for vector stores
-    for file in file_paths:
-        # Load CSV data
-        loader = CSVLoader(file_path=file)
-        documents = loader.load()
-        
-        # Extract metadata from documents
-        for doc in documents:
-            content_lines = doc.page_content.split('\n')
-            title = ""
-            price = ""
-            
-            # Parse document content for metadata
-            for line in content_lines:
-                if line.startswith("Title:"):
-                    title = line.replace("Title:", "").strip()
-                elif line.startswith("Variant Price:"):
-                    price_str = line.replace("Variant Price:", "").strip()
-                    try:
-                        price = float(price_str)
-                    except:
-                        price = price_str
-                elif line.startswith("Metafield: my_fields.brand_name [single_line_text_field]: "):
-                    brand = line.replace("Metafield: my_fields.brand_name [single_line_text_field]: ", "").strip()
-            
-            # Add metadata to document
-            doc.metadata["Title"] = title
-            doc.metadata["Price"] = price
-            doc.metadata["Brand"] = brand
-
-        # Split documents into chunks for better processing
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-        split_docs = text_splitter.split_documents(documents)
-        namespace = namespaces[file]
-        
-        # Add category metadata and prepare documents for stores
-        for doc in split_docs:
-            doc.metadata["Category"] = namespace
-            faiss_docs.append(doc)
-            
-            if not index_exists:
-                pinecone_docs[namespace].append(doc)
-        
-        print(f"Number of documents in {namespace}: {len(split_docs)}")
-        print(f"Number of documents in Faiss: {len(faiss_docs)}")
-
-    # Initialize FAISS store
-    if os.path.exists(faiss_docs_dir) and faiss_docs_dir == "faiss_index":
-        print(f"Loading OpenAI FAISS store from {faiss_docs_dir}")
-        faiss_store = FAISS.load_local(faiss_docs_dir, embeddings, allow_dangerous_deserialization=True)   
-    elif os.path.exists(faiss_docs_dir) and faiss_docs_dir == "faiss_index_generic":
-        print(f"Loading Generic FAISS store from {faiss_docs_dir}")
-        faiss_store = FAISS.load_local(faiss_docs_dir, embeddings, allow_dangerous_deserialization=True)
-    else:
-        print(f"Creating new FAISS store in {faiss_docs_dir}")
-        faiss_store = FAISS.from_documents(faiss_docs, embeddings)
-        faiss_store.save_local(faiss_docs_dir)
-
-    # Initialize Pinecone stores for each category
-    pinecone_store = {}
-    for namespace in namespaces.values():
-        vector_store = PineconeVectorStore(
-            index_name=index_name, 
-            embedding=embeddings, 
-            text_key="text", 
-            namespace=namespace
-        )
-        
-        # Add documents if index is new
-        if not index_exists and namespace in pinecone_docs and pinecone_docs[namespace]:
-            print(f"Ingesting documents to Pinecone namespace: {namespace}")
-            vector_store.add_documents(pinecone_docs[namespace])
-        
-        pinecone_store[namespace] = vector_store
-    
-    return faiss_store, pinecone_store
 
 def classify_query(query):
     """
