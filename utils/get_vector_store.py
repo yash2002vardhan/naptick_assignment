@@ -5,6 +5,8 @@ from langchain_community.document_loaders import CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_pinecone import PineconeVectorStore  
 from langchain_community.vectorstores import FAISS
+from process_txt import flatten_conversations
+from langchain.docstore.document import Document
 import os
 
 load_dotenv()
@@ -30,12 +32,12 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
         embedding_size = 384  # HuggingFace embedding dimension
     
     # Define data sources and categories
-    file_paths = ['datasets/fitbit_data/merged_hourly_data.csv', 'datasets/fitbit_data/heartrate_seconds_merged.csv', 'datasets/fitbit_data/merged_minute_data.csv', 'datasets/fitbit_data/merged_daily_data.csv', 'datasets/fitbit_data/weightLogInfo_merged.csv', "datasets/geotag_data.csv", "datasets/nutrition_data.csv", "datasets/user_data.csv"]
+    file_paths = ['datasets/fitbit_data/merged_hourly_data.csv', 'datasets/fitbit_data/heartrate_seconds_merged.csv', 'datasets/fitbit_data/merged_minute_data.csv', 'datasets/fitbit_data/merged_daily_data.csv', 'datasets/fitbit_data/weightLogInfo_merged.csv', "datasets/geotag_data.csv", "datasets/nutrition_data.csv", "datasets/user_data.csv", 'datasets/chats.txt']
 
-    namespaces = ["fitbit", "geotag", "nutrition", "user"]
+    namespaces = ["fitbit", "geotag", "nutrition", "user", "chat"]
 
     faiss_docs = []
-    pinecone_docs = {"fitbit": [], "geotag": [], "nutrition": [], "user": []}
+    pinecone_docs = {"fitbit": [], "geotag": [], "nutrition": [], "user": [], "chat": []}
 
     # Initialize Pinecone client
     pc = pinecone.Pinecone(api_key=pinecone_api_key)
@@ -65,6 +67,11 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
     # Process documents for vector stores
     for file in file_paths:
 
+        if file.endswith(".txt"):
+            data_to_embed = flatten_conversations(file)
+            documents = [Document(page_content=item["text"], metadata={"source": item["id"]}) for item in data_to_embed]
+            split_docs = documents
+
         loader = CSVLoader(file_path=file)
         documents = loader.load()
 
@@ -80,6 +87,9 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
 
         elif file == "datasets/user_data.csv":
             namespace = "user"
+        
+        elif file == "datasets/chats.txt":
+            namespace = "chat"
         
         else:
             namespace = "fitbit"
