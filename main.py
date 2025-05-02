@@ -42,88 +42,69 @@ def get_memory():
         ConversationBufferMemory: The initialized memory
     """
     return ConversationBufferMemory(
-        llm=ChatOpenAI(model=llm_model, api_key=openai_api_key),  # type: ignore
+        memory_key = "chat_history",
+        input_key = "question",
+        output_key = "answer",
         return_messages=True
     )
 
 # Initialize memory
 memory = get_memory()
 
-def process_query(query, history,retriever_type):
-    """
-    Process user queries using the selected retrievers and return a response.
-    
-    Args:
-        query (str): User's query
-        history (list): List of previous conversation turns
-        
-    Returns:
-        str: Response to the query
-    """
+
+def process_query(query, retriever_type, history):
     # Get appropriate retriever
     retriever = select_retriever(faiss_store, pinecone_store, retriever_type)
-    
-    # Get conversation history
-    memory_variables = memory.load_memory_variables({})
-    conversation_history = memory_variables.get("history", "")
-    
-    try:
-        docs = retriever.get_relevant_documents(query) #type: ignore
-    except Exception as e:
-        print(f"Error with retriever: {e}")
-        docs = []
-    
+
+    # Update memory with history
+    for user_msg, bot_msg in history:
+        memory.save_context({"question": user_msg}, {"answer": bot_msg})
+
+    # Retrieve context
+    docs = retriever.get_relevant_documents(query) if retriever else []
     if not docs:
         return "I couldn't find any relevant information. Could you try rephrasing your query?"
-    
+
     # Format retrieved documents
-    formatted_docs = ""
-    for i, doc in enumerate(docs[:8]):
-        formatted_docs += f"DOCUMENT {i+1}:\n"
-        formatted_docs += f"{doc.page_content}\n\n"
-    
-    # Initialize language model
+    formatted_docs = "\n".join([f"DOCUMENT {i+1}:\n{doc.page_content}\n\n" for i, doc in enumerate(docs[:8])])
+
+    # Initialize LLM
     llm = ChatOpenAI(model=llm_model, api_key=openai_api_key) #type: ignore
-    
+
     # Create prompt template
     template = """
     You are a helpful assistant. Use the following pieces of retrieved context to answer the question.
     If you don't know the answer, just say that you don't know, don't try to make up an answer.
-    
+
     CONVERSATION HISTORY:
-    {conversation_history}
-    
+    {chat_history}
+
     RETRIEVED CONTEXT:
     {formatted_docs}
-    
+
     Question: {question}
-    
+
     Answer:"""
     
-    PROMPT = PromptTemplate.from_template(template)
-    
-    # Create and run chain
-    chain = PROMPT | llm
+    prompt = PromptTemplate.from_template(template)
+
+    # Run chain
+    chain = prompt | llm
     result = chain.invoke({
-        "formatted_docs": formatted_docs, 
+        "formatted_docs": formatted_docs,
         "question": query,
-        "conversation_history": conversation_history
+        "chat_history": "\n".join([f"{msg.type.upper()}: {msg.content}" for msg in memory.load_memory_variables({}).get("chat_history", [])])
     }).content
     
-    # Save conversation context
-    memory.save_context({"input": query}, {"output": result}) #type: ignore
+    # Save context for future reference
+    memory.save_context({"question": query}, {"answer": result})
     
     return result
 
 def create_gradio_interface():
     """
-    Creates a Gradio interface for the chatbot.
-    This function handles:
-    - Setting up the chat interface
-    - Managing chat history 
-    - Processing user input and displaying responses
+    Create a simple Gradio interface for the chatbot.
     """
-    # Create the Gradio interface
     with gr.Blocks(title="Assistant") as interface:
         gr.Markdown("# Assistant")
         gr.Markdown("Ask me anything! I'll try to help you with your questions.")
@@ -133,14 +114,14 @@ def create_gradio_interface():
         msg = gr.Textbox(label="Your message", placeholder="What would you like to know?")
         retriever_type = gr.Dropdown(choices=["faiss", "pinecone"], label="Retriever Type", value="faiss")
         clear = gr.Button("Clear")
-        
-        def respond(message, chat_history, retriever_type):
-            bot_message = process_query(message, chat_history, retriever_type)
-            chat_history.append((message, bot_message))
+
+        def respond(message, retriever_type, history):
+            bot_message = process_query(message, retriever_type, history)
+            chat_history = history + [(message, bot_message)]
             return "", chat_history
         
-        msg.submit(respond, [msg, chatbot, retriever_type], [msg, chatbot])
-        clear.click(lambda: None, None, chatbot, queue=False)
+        msg.submit(respond, [msg, retriever_type, chatbot], [msg, chatbot])
+        clear.click(lambda: [], None, chatbot, queue=False)
     
     return interface
 
