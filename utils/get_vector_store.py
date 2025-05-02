@@ -76,7 +76,7 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
         documents = loader.load()
 
         # Split documents into chunks for better processing
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
         split_docs = text_splitter.split_documents(documents)
         
         if file == "datasets/geotag_data.csv":
@@ -100,12 +100,9 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
             
             if not index_exists:
                 pinecone_docs[namespace].append(doc)
-        
-        print(f"Number of documents in {namespace}: {len(split_docs)}")
-        print(f"Number of documents in Faiss: {len(faiss_docs)}")
 
     # Initialize FAISS store
-    if os.path.exists(faiss_docs_dir) and faiss_docs_dir == "faiss_index":
+    if os.path.exists(faiss_docs_dir) and faiss_docs_dir == "faiss_index_openai":
         print(f"Loading OpenAI FAISS store from {faiss_docs_dir}")
         faiss_store = FAISS.load_local(faiss_docs_dir, embeddings, allow_dangerous_deserialization=True)   
     elif os.path.exists(faiss_docs_dir) and faiss_docs_dir == "faiss_index_generic":
@@ -128,7 +125,6 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
         
         # Add documents if index is new
         if not index_exists and namespace in pinecone_docs and pinecone_docs[namespace]:
-            print(f"Ingesting documents to Pinecone namespace: {namespace}")
             vector_store.add_documents(pinecone_docs[namespace])
         
         pinecone_store[namespace] = vector_store

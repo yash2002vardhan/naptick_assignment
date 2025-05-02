@@ -15,21 +15,23 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")  # Get OpenAI API key
 pinecone_api_key = os.getenv("PINECONE_API_KEY")  # Get Pinecone API key
 brave_api_key = os.getenv("BRAVE_API_KEY")  # Get Brave Search API key
-llm_model = "gpt-4o"  # Specify the language model to use
+llm_model = "gpt-4.1"  # Specify the language model to use
 
 # Initialize vector stores
-faiss_store, pinecone_store = initialize_vector_stores("generic", "faiss_index_generic")
+faiss_store, pinecone_store = initialize_vector_stores("openai", "faiss_index_openai")
 
-def select_retriever(faiss_store, pinecone_store):
-    if pinecone_store is not None:
+def select_retriever(faiss_store, pinecone_store, retriever_type):
+    if pinecone_store is not None and retriever_type == "pinecone":
         retrievers = [store.as_retriever() for store in pinecone_store.values()]
         ensemble_retriever = EnsembleRetriever(
             retrievers=retrievers,
             weights=[1/len(retrievers)] * len(retrievers)
         )
         return ensemble_retriever
-    else:
+    elif faiss_store is not None and retriever_type == "faiss":
         return faiss_store.as_retriever()
+    else:
+        raise ValueError("No retriever type selected")
 
 def get_memory():
     """
@@ -47,7 +49,7 @@ def get_memory():
 # Initialize memory
 memory = get_memory()
 
-def process_query(query, history):
+def process_query(query, history,retriever_type):
     """
     Process user queries using the selected retrievers and return a response.
     
@@ -59,7 +61,7 @@ def process_query(query, history):
         str: Response to the query
     """
     # Get appropriate retriever
-    retriever = select_retriever(faiss_store, pinecone_store)
+    retriever = select_retriever(faiss_store, pinecone_store, retriever_type)
     
     # Get conversation history
     memory_variables = memory.load_memory_variables({})
@@ -118,7 +120,7 @@ def create_gradio_interface():
     Creates a Gradio interface for the chatbot.
     This function handles:
     - Setting up the chat interface
-    - Managing chat history
+    - Managing chat history 
     - Processing user input and displaying responses
     """
     # Create the Gradio interface
@@ -129,14 +131,15 @@ def create_gradio_interface():
         # Create chat interface
         chatbot = gr.Chatbot(height=500)
         msg = gr.Textbox(label="Your message", placeholder="What would you like to know?")
+        retriever_type = gr.Dropdown(choices=["faiss", "pinecone"], label="Retriever Type", value="faiss")
         clear = gr.Button("Clear")
         
-        def respond(message, chat_history):
-            bot_message = process_query(message, chat_history)
+        def respond(message, chat_history, retriever_type):
+            bot_message = process_query(message, chat_history, retriever_type)
             chat_history.append((message, bot_message))
             return "", chat_history
         
-        msg.submit(respond, [msg, chatbot], [msg, chatbot])
+        msg.submit(respond, [msg, chatbot, retriever_type], [msg, chatbot])
         clear.click(lambda: None, None, chatbot, queue=False)
     
     return interface
