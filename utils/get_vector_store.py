@@ -1,11 +1,11 @@
-from generate_embeddings import get_embeddings
+from utils.generate_embeddings import get_embeddings
 import pinecone
 from dotenv import load_dotenv
 from langchain_community.document_loaders import CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_pinecone import PineconeVectorStore  
 from langchain_community.vectorstores import FAISS
-from process_txt import flatten_conversations
+from utils.process_txt import flatten_conversations
 from langchain.docstore.document import Document
 import os
 
