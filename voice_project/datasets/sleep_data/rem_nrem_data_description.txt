@@ -1,0 +1,22 @@
+The dataset was collected from a sleep center named Haaglanden Medisch Centrum (HMC, The Netherlands). The initial data files contain different types of signals. We selected EEG signals from multiple locations:
+
+- F4 from the frontal lobe (controls voluntary movements)
+- C4 from the central lobe (handles thoughts and analytical activities) 
+- O2 from the occipital lobe (responsible for vision)
+
+To characterize sleep stages, the EEG is divided into five frequency subbands:
+- Delta waves: 0-4 Hz
+- Theta waves: 4-8 Hz  
+- Alpha waves: 8-12 Hz
+- Beta waves: 12-30 Hz
+- Gamma waves: >30 Hz
+
+Dataset details:
+- 154 sleep recordings
+- 75 features per recording
+- Original classifications: Wake, N1, N2, N3, REM
+
+Preprocessing:
+- Removed all Wake-classified rows
+- Merged N1, N2, N3 classes into a single NREM class
+- Final classes: NREM, REM

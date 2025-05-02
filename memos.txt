@@ -1,6 +1,0 @@
-Synthetic Data obtained from:
-
-1. Kaggle: sleep data
-2. Synthetic Data Generator from Huggingface: chat history user data
-3. Mockery, Fakeroo, Fakerson: for fitness related data and fake users
-4. Coders's Tool: for geotag data
