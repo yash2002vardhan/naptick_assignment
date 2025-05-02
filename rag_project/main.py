@@ -97,7 +97,7 @@ def process_query(query, retriever_type, history):
     }).content
     
     # Save context for future reference
-    memory.save_context({"question": query}, {"answer": result})
+    memory.save_context({"question": query}, {"answer": result}) #type: ignore
     
     return result
 
