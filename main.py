@@ -18,7 +18,7 @@ brave_api_key = os.getenv("BRAVE_API_KEY")  # Get Brave Search API key
 llm_model = "gpt-4.1"  # Specify the language model to use
 
 # Initialize vector stores
-faiss_store, pinecone_store = initialize_vector_stores("openai", "faiss_index_openai")
+faiss_store, pinecone_store = initialize_vector_stores("openai", "faiss_index_openai", batch_size=100)
 
 def select_retriever(faiss_store, pinecone_store, retriever_type):
     if pinecone_store is not None and retriever_type == "pinecone":

@@ -12,7 +12,7 @@ import os
 load_dotenv()
 pinecone_api_key = os.getenv("PINECONE_API_KEY")
 
-def initialize_vector_stores(model:str, faiss_docs_dir:str):
+def initialize_vector_stores(model:str, faiss_docs_dir:str, batch_size: int = 100):
     """
     Initialize and return vector stores (FAISS and Pinecone).
     If Pinecone index already exists, skip document ingestion.
@@ -20,6 +20,7 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
     Args:
         model (str): Embedding model to use ('openai' or 'generic')
         faiss_docs_dir (str): Directory for FAISS index storage
+        batch_size (int): Number of documents to process in each batch
         
     Returns:
         tuple: (faiss_store, pinecone_store) - The initialized vector stores
@@ -125,11 +126,21 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str):
         
         # Add documents if index is new
         if not index_exists and namespace in pinecone_docs and pinecone_docs[namespace]:
-            vector_store.add_documents(pinecone_docs[namespace])
+            # Process documents in batches
+            docs = pinecone_docs[namespace]
+            total_docs = len(docs)
+            print(f"Processing {total_docs} documents for namespace {namespace} in batches of {batch_size}")
+            
+            for i in range(0, total_docs, batch_size):
+                batch = docs[i:i + batch_size]
+                try:
+                    vector_store.add_documents(batch)
+                    print(f"Processed batch {i//batch_size + 1}/{(total_docs + batch_size)//batch_size}")
+                except Exception as e:
+                    print(f"Error processing batch {i//batch_size + 1} for namespace {namespace}: {str(e)}")
+                    # Continue with next batch even if current batch fails
+                    continue
         
         pinecone_store[namespace] = vector_store
     
     return faiss_store, pinecone_store
-
-if __name__ == "__main__":
-    initialize_vector_stores("generic", "faiss_index_generic")
