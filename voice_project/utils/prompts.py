@@ -14,8 +14,6 @@ system_prompts = {
     ["document1" , "document2" , "document3"]
     here document1, document2, document3 can be csv documents or research papers or both.''',
 
-    'csv_prompt' : "There should be no pandas or any other code in the response. The response should just contain the answer to the question.",
-
     'research_prompt' : '''
             You are an expert in the field of sleep and sleep disorders. You have access to the following research papers:
             {research_content}

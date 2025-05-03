@@ -9,8 +9,6 @@ def get_answer(query:str):
 
     response_list = []
     research_content = ""
-    
-    csv_prompt = system_prompts['csv_prompt']
 
     research_prompt = system_prompts['research_prompt']
 
@@ -25,7 +23,6 @@ def get_answer(query:str):
                     verbose=True,
                     allow_dangerous_code=True,
                     handle_parsing_errors=True,
-                    prompt=csv_prompt
                 )
                 response = agent_executor.invoke({"input": query})
                 response_list.append(response)
@@ -33,6 +30,7 @@ def get_answer(query:str):
                 continue
 
         if doc.endswith(".md"):
+            print("Going to research mode")
             content = parse_research_content(doc)
             research_content += content
             response = model.invoke(research_prompt.format(research_content=research_content, query=query))
