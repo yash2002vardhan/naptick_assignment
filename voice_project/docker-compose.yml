@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  voice-assistant:
+    build: .
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./datasets:/app/datasets
+      - ./utils:/app/utils
+      - ./utils/responses.txt:/app/utils/responses.txt
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    restart: unless-stopped
+    env_file: .env

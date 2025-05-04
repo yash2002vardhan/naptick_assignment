@@ -4,6 +4,7 @@ import gradio as gr
 from gtts import gTTS
 from utils.check_cache import get_cached_response
 from ast import literal_eval
+
 model = whisper.load_model("base")
 
 with open("utils/responses.txt", "r") as file:
