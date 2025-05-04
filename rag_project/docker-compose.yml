@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  rag-assistant:
+    build: .
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./datasets:/app/datasets
+      - ./utils:/app/utils
+      - ./faiss_index_generic:/app/faiss_index_generic
+      - ./faiss_index_openai:/app/faiss_index_openai
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    restart: unless-stopped
+    env_file: .env
