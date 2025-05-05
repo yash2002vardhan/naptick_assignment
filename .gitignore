@@ -86,3 +86,4 @@ chats.pickle
 *REM_NREM.csv
 *.mp3
 .DS_Store
+*db
