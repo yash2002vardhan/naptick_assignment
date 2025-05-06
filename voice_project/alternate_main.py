@@ -7,6 +7,7 @@ import gradio as gr
 from gtts import gTTS
 from utils.check_cache import get_cached_response
 from ast import literal_eval
+from utils.add_bgm import create_tts_with_music
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -45,13 +46,13 @@ def process_audio(audio_path):
         tts = gTTS(text=response, lang='en')
         audio_response = "temp_response.mp3"
         tts.save(audio_response)
+        final_response = create_tts_with_music(audio_response)
         print("Audio processing successful")
         
-        return query, audio_response
+        return query, final_response
     
     except Exception as e:
         return f"Error processing audio: {str(e)}", None
-
 
 
 # TODO: create embeddings using the openai api, currently using ollama with 384 embedding size
@@ -108,7 +109,7 @@ def get_answer(query):
 
         task  = Task(
             description = query,
-            expected_output = "a summarised response which covers all the major information such as any figures, or any other information that is relevant to the user query",
+            expected_output = "a summarised response which covers all the major information such as any figures, or any other information that is relevant to the user query. The output should be in a conversational tone and should be easy to understand. Also there should be no special formatting or markdown in the output",
             agent = sleep_agent
         )
 
