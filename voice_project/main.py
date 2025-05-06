@@ -55,4 +55,4 @@ if __name__ == "__main__":
         description="Ask a question about sleep and health through voice"
     )
 
-    iface.launch()
+    iface.launch(server_name="0.0.0.0", server_port=7860)

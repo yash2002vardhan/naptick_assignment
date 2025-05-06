@@ -6,6 +6,7 @@ from utils.prompts import system_prompts
 
 def get_answer(query:str):
     chosen_docs = choose_doc(query)
+    print(f"Chosen docs: {chosen_docs}")
 
     response_list = []
     research_content = ""

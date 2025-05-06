@@ -22,7 +22,6 @@ system_prompts = {
             
             Based on the user query, give me the most relevant information from the research papers in the simplest form possible.
             Do not include any other text tnat the answer.''',
-
     'summary_prompt' : '''
     You are a skilled expert at synthesizing complex information into clear, actionable advice. 
 
@@ -36,7 +35,8 @@ system_prompts = {
         3. Preserves all key data points, statistics, and research findings
         4. Organizes information in a clear, logical flow
         5. Uses a friendly, encouraging tone
-        6. The final response should be about 100 - 150 words in a paragraph format.
+        6. The final response should be about 100 - 150 words in a paragraph format
+        7. Contains NO formatting, markdown, bullet points, or special characters - just plain text
 
-        Focus only on the most relevant information to their question. Your response should contain just the summary itself, with no additional text or meta-commentary. You may also add some suggestions or recommendations based on the user {query}, which is not directly related to the content.'''
+        Focus only on the most relevant information to their question. Your response should contain just the summary itself, with no additional text or meta-commentary. You may also add some suggestions or recommendations based on the user {query}, which is not directly related to the content. The output should be in plain text format without any special formatting or markdown.'''
 }
