@@ -57,7 +57,10 @@ voice_project/
 - Pinecone API key (for rag project)
 - Sufficient disk space for FAISS indices and datasets
 - FFmpeg (required for audio processing in Voice Project)
-  - For macOS: `brew install ffmpeg`
+  - For macOS: 
+   ```bash
+   brew install ffmpeg
+   ```
   - For Windows: Download from [FFmpeg official website](https://ffmpeg.org/download.html) and add to system PATH
 
 ## Installation
@@ -68,7 +71,7 @@ voice_project/
    cd naptick_assignment
    ```
 
-2. Create and activate a virtual environment (optional but recommended):
+2. Create and activate a virtual environment (optional but recommended) with python 3.10 as the interpreter:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -81,7 +84,7 @@ voice_project/
    pip install -r requirements.txt
 
    # For Voice Project
-   cd ../voice_project
+   cd voice_project
    pip install -r requirements.txt
    ```
 
@@ -186,4 +189,4 @@ OPENAI_API_KEY=your_openai_api_key
    ```
 
 ## Features and Other details
-This can be accessed from this google drive link here: [Naptick_Assignment](https://docs.google.com/document/d/1L-lmqtymVzcR5taQ-d3nLUIdj7yirM4yEspezLH29aw/edit?usp=sharing)
+This can be accessed from the Google doc present at this link: [Naptick_Assignment](https://docs.google.com/document/d/1L-lmqtymVzcR5taQ-d3nLUIdj7yirM4yEspezLH29aw/edit?usp=sharing)
