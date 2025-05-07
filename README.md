@@ -185,22 +185,5 @@ OPENAI_API_KEY=your_openai_api_key
    docker compose up --build
    ```
 
-## Features
-
-### RAG Project
-- Semantic search for sleep-related queries
-- Support for multiple embedding types
-- Interactive Gradio interface
-- Pre-built FAISS indices for quick deployment
-
-### Voice Project
-- Voice-to-text conversion using OpenAI Whisper
-- Text-to-voice synthesis
-- Conversation history tracking
-- Multiple interface options (web and voice)
-
-## Notes
-- Both projects require an OpenAI API key for full functionality
-- The RAG project includes pre-built FAISS indices for quick deployment
-- The Voice project requires sufficient disk space for audio processing
-- Docker deployment is recommended for consistent environment setup
+## Features and Other details
+This can be accessed from this google drive link here: [Naptick_Assignment](https://docs.google.com/document/d/1L-lmqtymVzcR5taQ-d3nLUIdj7yirM4yEspezLH29aw/edit?usp=sharing)
