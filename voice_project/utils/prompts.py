@@ -1,3 +1,22 @@
+"""
+Prompt templates module for the Voice Assistant.
+
+This module contains the system prompts used by different components of the
+Voice Assistant. These prompts are designed to guide the language models in
+performing specific tasks such as document selection, research analysis, and
+response summarization.
+
+The module includes three main prompts:
+1. docs_prompt: For selecting relevant documents
+2. research_prompt: For analyzing research paper content
+3. summary_prompt: For synthesizing and summarizing responses
+
+Each prompt is carefully crafted to:
+- Provide clear instructions to the model
+- Maintain consistent output formats
+- Ensure comprehensive and relevant responses
+"""
+
 system_prompts = {
 
     'docs_prompt' : '''
