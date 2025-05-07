@@ -22,8 +22,8 @@ with open("utils/responses.txt", "r") as file:
 
 
 
-embeddings_path = "voice_project/db"
-collection_name = "4ce43c40-eb0d-49bf-ad1e-0d9234131000"
+embeddings_path = "openai_embeddings"
+collection_name = "sleep_collection"
 
 def process_audio(audio_path):
     # Transcribe audio using whisper
@@ -47,6 +47,7 @@ def process_audio(audio_path):
         audio_response = "temp_response.mp3"
         tts.save(audio_response)
         final_response = create_tts_with_music(audio_response)
+        os.remove(audio_response)
         print("Audio processing successful")
         
         return query, final_response
@@ -76,7 +77,6 @@ config = {
             "collection_name": collection_name
         }
     }
-
 }
 
 
@@ -87,7 +87,7 @@ rag_tool = RagTool(config=config) #type: ignore
 if os.path.exists(embeddings_path):
     print("Embeddings already exist")
 else:
-    print("Embeddings do not exist")
+    print("Embeddings do not exist, creating new vector database")
     rag_tool.add(data_type = "directory", source = "/Users/yashvardhan/Documents/Desktop_Folders/ProjectsAndTutorials/naptick_assignment/voice_project/datasets")
 
 

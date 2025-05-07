@@ -5,7 +5,7 @@ from gtts import gTTS
 from utils.check_cache import get_cached_response
 from ast import literal_eval
 from utils.add_bgm import create_tts_with_music
-
+import os
 model = whisper.load_model("base")
 
 with open("utils/responses.txt", "r") as file:
@@ -36,6 +36,7 @@ def process_audio(audio_path):
         tts.save(audio_response)
         final_response = create_tts_with_music(audio_response)
         print("Audio processing successful")
+        os.remove(audio_response)
         
         return query, final_response
     

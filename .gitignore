@@ -84,6 +84,6 @@ synthetic_conversations.json
 chats.pickle
 *.txt
 *REM_NREM.csv
-*.mp3
+output.mp3
 .DS_Store
-*db
+openai_embeddings/

@@ -39,11 +39,12 @@ voice_project/
 ├── main.py               # Main application entry point
 ├── alternate_main.py     # Alternative implementation
 ├── .env                  # Environment variables configuration
+├── bgm.mp3               # Background music file
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile            # Docker configuration
 ├── docker-compose.yml    # Docker Compose configuration
 ├── utils/                # Utility functions and helpers
-├── db/                   # Database files and configurations
+├── openai_embeddings     # Openai embeddings for the alternate_main.py
 └── datasets/             # Training and test datasets
 ```
 
