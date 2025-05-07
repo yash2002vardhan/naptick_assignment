@@ -1,3 +1,25 @@
+"""
+Vector store initialization and management module for the RAG system.
+
+This module handles the creation and management of vector stores (FAISS and Pinecone)
+used for similarity search in the RAG system. It supports both local FAISS indices
+and cloud-based Pinecone indices, with the ability to handle multiple data sources
+and namespaces.
+
+The module processes various data sources including:
+- Fitbit data (hourly, daily, heart rate, weight logs)
+- Geotag data
+- Nutrition data
+- User data
+- Chat conversations
+
+Dependencies:
+    - pinecone-client: For Pinecone vector store integration
+    - langchain: For document processing and vector store operations
+    - langchain_community: For document loaders and FAISS integration
+    - langchain_pinecone: For Pinecone vector store integration
+"""
+
 from utils.generate_embeddings import get_embeddings
 import pinecone
 from dotenv import load_dotenv
@@ -15,15 +37,27 @@ pinecone_api_key = os.getenv("PINECONE_API_KEY")
 def initialize_vector_stores(model:str, faiss_docs_dir:str, batch_size: int = 100):
     """
     Initialize and return vector stores (FAISS and Pinecone).
-    If Pinecone index already exists, skip document ingestion.
+    
+    This function handles the creation and initialization of both FAISS and Pinecone
+    vector stores. It processes various data sources, splits them into chunks, and
+    creates vector embeddings for similarity search. The function supports both
+    OpenAI and HuggingFace embedding models.
     
     Args:
-        model (str): Embedding model to use ('openai' or 'generic')
-        faiss_docs_dir (str): Directory for FAISS index storage
-        batch_size (int): Number of documents to process in each batch
-        
+        model (str): The embedding model to use ('openai' or 'generic')
+        faiss_docs_dir (str): Directory for storing/loading FAISS index
+        batch_size (int, optional): Number of documents to process in each batch.
+            Defaults to 100.
+    
     Returns:
-        tuple: (faiss_store, pinecone_store) - The initialized vector stores
+        tuple: A tuple containing:
+            - faiss_store: The initialized FAISS vector store
+            - pinecone_store: Dictionary of initialized Pinecone vector stores by namespace
+    
+    Note:
+        - For OpenAI model, embedding dimension is 1536
+        - For HuggingFace model, embedding dimension is 384
+        - Pinecone index names are prefixed with 'rag-naptick-'
     """
     # Get embeddings based on model choice
     embeddings = get_embeddings(model)
@@ -67,31 +101,29 @@ def initialize_vector_stores(model:str, faiss_docs_dir:str, batch_size: int = 10
 
     # Process documents for vector stores
     for file in file_paths:
-
+        # Handle text files (chat conversations) differently
         if file.endswith(".txt"):
             data_to_embed = flatten_conversations(file)
             documents = [Document(page_content=item["text"], metadata={"source": item["id"]}) for item in data_to_embed]
             split_docs = documents
+        else:
+            # Load and process CSV files
+            loader = CSVLoader(file_path=file)
+            documents = loader.load()
 
-        loader = CSVLoader(file_path=file)
-        documents = loader.load()
-
-        # Split documents into chunks for better processing
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
-        split_docs = text_splitter.split_documents(documents)
+            # Split documents into chunks for better processing
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
+            split_docs = text_splitter.split_documents(documents)
         
+        # Determine namespace based on file type
         if file == "datasets/geotag_data.csv":
             namespace = "geotag"
-
         elif file == "datasets/nutrition_data.csv":
             namespace = "nutrition"
-
         elif file == "datasets/user_data.csv":
             namespace = "user"
-        
         elif file == "datasets/chats.txt":
             namespace = "chat"
-        
         else:
             namespace = "fitbit"
             

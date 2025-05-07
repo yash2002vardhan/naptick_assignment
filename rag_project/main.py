@@ -1,3 +1,21 @@
+"""
+Main module for the RAG (Retrieval-Augmented Generation) chatbot application.
+
+This module implements a chatbot that uses both FAISS and Pinecone vector stores for
+retrieving relevant context to answer user queries. It provides a Gradio web interface
+for user interaction and maintains conversation history using LangChain's memory system.
+
+The application supports two types of retrievers:
+1. FAISS: A local vector store for fast similarity search
+2. Pinecone: A cloud-based vector store for scalable similarity search
+
+Dependencies:
+    - langchain: For RAG pipeline components
+    - gradio: For web interface
+    - openai: For language model integration
+    - dotenv: For environment variable management
+"""
+
 # Import necessary libraries
 import os  # For environment variables and file operations
 
@@ -21,6 +39,20 @@ llm_model = "gpt-4.1"  # Specify the language model to use
 faiss_store, pinecone_store = initialize_vector_stores("openai", "faiss_index_openai", batch_size=100)
 
 def select_retriever(faiss_store, pinecone_store, retriever_type):
+    """
+    Select and configure the appropriate retriever based on the specified type.
+    
+    Args:
+        faiss_store: The FAISS vector store instance
+        pinecone_store: The Pinecone vector store instance
+        retriever_type (str): Type of retriever to use ('faiss' or 'pinecone')
+    
+    Returns:
+        A configured retriever instance (either FAISS or EnsembleRetriever for Pinecone)
+    
+    Raises:
+        ValueError: If no valid retriever type is selected
+    """
     if pinecone_store is not None and retriever_type == "pinecone":
         retrievers = [store.as_retriever() for store in pinecone_store.values()]
         ensemble_retriever = EnsembleRetriever(
@@ -39,7 +71,7 @@ def get_memory():
     Used to maintain conversation history.
     
     Returns:
-        ConversationBufferMemory: The initialized memory
+        ConversationBufferMemory: The initialized memory instance with configured keys
     """
     return ConversationBufferMemory(
         memory_key = "chat_history",
@@ -51,8 +83,18 @@ def get_memory():
 # Initialize memory
 memory = get_memory()
 
-
 def process_query(query, retriever_type, history):
+    """
+    Process a user query by retrieving relevant context and generating a response.
+    
+    Args:
+        query (str): The user's question
+        retriever_type (str): Type of retriever to use ('faiss' or 'pinecone')
+        history (list): List of previous conversation turns
+    
+    Returns:
+        str: The generated response based on retrieved context
+    """
     # Get appropriate retriever
     retriever = select_retriever(faiss_store, pinecone_store, retriever_type)
 
@@ -103,7 +145,10 @@ def process_query(query, retriever_type, history):
 
 def create_gradio_interface():
     """
-    Create a simple Gradio interface for the chatbot.
+    Create and configure the Gradio web interface for the chatbot.
+    
+    Returns:
+        gr.Blocks: The configured Gradio interface
     """
     with gr.Blocks(title="Assistant") as interface:
         gr.Markdown("# Assistant")
