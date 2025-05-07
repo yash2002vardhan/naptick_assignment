@@ -188,5 +188,7 @@ OPENAI_API_KEY=your_openai_api_key
    docker compose up --build
    ```
 
+Please note that Gradio may take a few minutes to initialize inside the Docker container. You can monitor the container logs to track the startup progress. 
+
 ## Features and Other details
 This can be accessed from the Google doc present at this link: [Naptick_Assignment](https://docs.google.com/document/d/1L-lmqtymVzcR5taQ-d3nLUIdj7yirM4yEspezLH29aw/edit?usp=sharing)
