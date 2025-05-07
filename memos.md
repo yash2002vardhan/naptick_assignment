@@ -12,3 +12,5 @@
 1. Kaggle: sleep data, fitbit data
 2. Research Papers: from google
 
+You need to have ffmpeg on your system to try out voice_project
+add .env.example

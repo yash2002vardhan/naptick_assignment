@@ -56,7 +56,6 @@ def process_audio(audio_path):
         return f"Error processing audio: {str(e)}", None
 
 
-# TODO: create embeddings using the openai api, currently using ollama with 384 embedding size
 config = {
     "llm": {
         "provider": "openai",

@@ -50,12 +50,15 @@ voice_project/
 
 ## Prerequisites
 
-- Python 3.10 or higher
+- Python 3.10
 - Git
 - Docker (recommended)
 - OpenAI API key (for both projects)
 - Pinecone API key (for rag project)
 - Sufficient disk space for FAISS indices and datasets
+- FFmpeg (required for audio processing in Voice Project)
+  - For macOS: `brew install ffmpeg`
+  - For Windows: Download from [FFmpeg official website](https://ffmpeg.org/download.html) and add to system PATH
 
 ## Installation
 
@@ -84,7 +87,7 @@ voice_project/
 
 ## Environment Variables Setup
 
-Create a `.env` file in each project directory with the following variables:
+Copy the `.env.example` file to create a new `.env` file in each project directory and update the variables with your API keys:
 
 ### RAG Project (.env)
 ```
@@ -139,7 +142,7 @@ OPENAI_API_KEY=your_openai_api_key
 
     iface.launch(server_name="0.0.0.0", server_port=<your_preferred_port>)
    ```
-   There’s an alternative implementation of this project that uses RAG approach instead of dynamically accessing documents during runtime (as done in main.py). This version leverages `crewai` along with the `RagTool` (from crewai) to streamline the process.
+   There's an alternative implementation of this project that uses RAG approach instead of dynamically accessing documents during runtime (as done in main.py). This version leverages `crewai` along with the `RagTool` (from crewai) to streamline the process.
 
    To try it out, follow these steps:
 
