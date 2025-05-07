@@ -25,6 +25,7 @@ rag_project/
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile            # Docker configuration
 ├── docker-compose.yml    # Docker Compose configuration
+├── .env                  # Environment variables configuration
 ├── utils/                # Utility functions and helpers
 ├── faiss_index_openai/   # Pre-built FAISS index for OpenAI embeddings
 ├── faiss_index_generic/  # Pre-built FAISS index for generic embeddings
@@ -37,6 +38,7 @@ rag_project/
 voice_project/
 ├── main.py               # Main application entry point
 ├── alternate_main.py     # Alternative implementation
+├── .env                  # Environment variables configuration
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile            # Docker configuration
 ├── docker-compose.yml    # Docker Compose configuration
@@ -105,12 +107,65 @@ OPENAI_API_KEY=your_openai_api_key
    ```
    The application will start a Gradio interface accessible at `http://localhost:7860`
 
+   Please note  that you may need to change the port for gradio if port 7860 is not available. This can be done by configuring the gradio interface in `main.py` to use another port.
+   ``` bash
+   if __name__ == "__main__":
+    interface = create_gradio_interface()
+    interface.launch(server_name="0.0.0.0", server_port=<your_preferred_port>)
+   ```
+
 2. For Voice Project:
    ```bash
    cd voice_project
    python main.py
    ```
    The application will start a Gradio server accessible at `http://localhost:7860`
+
+   Please note  that you may need to change the port for gradio if port 7860 is not available. This can be done by configuring the gradio interface in `main.py` to use another port.
+   ``` bash
+   if __name__ == "__main__":
+    # Create Gradio interface
+    iface = gr.Interface(
+        fn=process_audio,
+        inputs=gr.Audio(type="filepath"),
+        outputs=[
+            gr.Textbox(label="Your Question"),
+            gr.Audio(label="AI Response")
+         ],
+        title="Voice Assistant",
+        description="Ask a question about sleep and health through voice"
+    )
+
+    iface.launch(server_name="0.0.0.0", server_port=<your_preferred_port>)
+   ```
+   There’s an alternative implementation of this project that uses RAG approach instead of dynamically accessing documents during runtime (as done in main.py). This version leverages `crewai` along with the `RagTool` (from crewai) to streamline the process.
+
+   To try it out, follow these steps:
+
+   ```bash
+   python alternate_main.py
+   ```
+   The application will start a Gradio server accessible at `http://localhost:7860`
+
+   Please note  that you may need to change the port for gradio if port 7860 is not available. This can be done by configuring the gradio interface in `main.py` to use another port.
+   ``` bash
+   if __name__ == "__main__":
+    # Create Gradio interface
+    iface = gr.Interface(
+        fn=process_audio,
+        inputs=gr.Audio(type="filepath"),
+        outputs=[
+            gr.Textbox(label="Your Question"),
+            gr.Audio(label="AI Response")
+        ],
+        title="Voice Assistant",
+        description="Ask a question about sleep and health through voice"
+    )
+
+    iface.launch(server_name="0.0.0.0", server_port=<your_preferred_port>)
+   ```
+
+
 
 ### Method 2: Using Docker (Recommended)
 
